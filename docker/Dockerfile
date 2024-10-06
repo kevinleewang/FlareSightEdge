@@ -91,7 +91,8 @@ RUN apt-get install -y \
         plotly==5.1.0 \
         jupyterlab \
         meson \
-        PyYAML
+        PyYAML \
+        paho-mqtt
 
 # Install miscellaneous packages
 RUN apt-get install -y \
