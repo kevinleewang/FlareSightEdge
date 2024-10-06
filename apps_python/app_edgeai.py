@@ -37,6 +37,9 @@ import utils
 
 
 def main(sys_argv):
+    with open("app_log.txt", "w") as file:
+            file.write("App edge ai ran")
+            
     args = utils.get_cmdline_args(sys_argv)
 
     with open(args.config, "r") as f:

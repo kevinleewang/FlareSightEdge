@@ -52,6 +52,8 @@ class EdgeAIDemo:
         Args:
             config: Dictionary of params pased from config file
         """
+        with open("edge_log.txt", "w") as file:
+            file.write("Edge AI class ran")
         self.config = config
         self.models = {}
         self.inputs = {}

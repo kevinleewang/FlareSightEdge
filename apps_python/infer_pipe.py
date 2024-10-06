@@ -98,8 +98,7 @@ class InferPipe:
             sub_flow: sub_flow configuration
             gst_pipe: gstreamer pipe object
         """
-        with open("log.txt", "w") as file:
-            file.write("Infer pipe ran")
+        
         self.sub_flow = sub_flow
         self.gst_pipe = gst_pipe
         self.gst_pre_inp = gst_pipe.get_src(sub_flow.gst_pre_src_name, sub_flow.flow.id)
