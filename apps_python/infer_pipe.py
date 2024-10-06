@@ -56,13 +56,15 @@ def on_connect(client, userdata, flags, rc):
     Callback when the client receives a CONNACK response from the server.
     """
     if rc == 0:
-        print("Connected to MQTT Broker successfully.")
+        with open("log.txt", "w") as file:
+            file.write("Connected to MQTT Broker successfully.")
         # Subscribe to the specified topics
-        for topic, qos in TOPICS:
-            client.subscribe(topic, qos)
-            print(f"Subscribed to topic: {topic} with QoS: {qos}")
+            for topic, qos in TOPICS:
+                client.subscribe(topic, qos)
+                file.write(f"Subscribed to topic: {topic} with QoS: {qos}")
     else:
-        print(f"Failed to connect to MQTT Broker. Return code: {rc}")
+        with open("log.txt", "w") as file:
+            file.write(f"Failed to connect to MQTT Broker. Return code: {rc}")
 
 def on_message(client, userdata, msg):
     """
@@ -70,16 +72,19 @@ def on_message(client, userdata, msg):
     """
     topic = msg.topic
     payload = msg.payload.decode('utf-8')
-    print(f"Received message from topic '{topic}': {payload}")
+    with open("log.txt", "w") as file:
+        file.write(f"Received message from topic '{topic}': {payload}")
 
 def on_disconnect(client, userdata, rc):
     """
     Callback when the client disconnects from the broker.
     """
     if rc != 0:
-        print("Unexpected disconnection from MQTT Broker.")
+        with open("log.txt", "w") as file:
+            print("Unexpected disconnection from MQTT Broker.")
     else:
-        print("Disconnected from MQTT Broker.")
+        with open("log.txt", "w") as file:
+            print("Disconnected from MQTT Broker.")
 
 class InferPipe:
     """
@@ -130,7 +135,8 @@ class InferPipe:
             self.client.loop_forever()
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            with open("log.txt", "w") as file:
+                file.write(f"An error occurred: {e}")
 
     def start(self):
         """
