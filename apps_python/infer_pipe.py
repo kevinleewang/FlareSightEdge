@@ -81,10 +81,10 @@ def on_disconnect(client, userdata, rc):
     """
     if rc != 0:
         with open("log.txt", "w") as file:
-            print("Unexpected disconnection from MQTT Broker.")
+            file.write("Unexpected disconnection from MQTT Broker.")
     else:
         with open("log.txt", "w") as file:
-            print("Disconnected from MQTT Broker.")
+            file.write("Disconnected from MQTT Broker.")
 
 class InferPipe:
     """
@@ -98,6 +98,8 @@ class InferPipe:
             sub_flow: sub_flow configuration
             gst_pipe: gstreamer pipe object
         """
+        with open("log.txt", "w") as file:
+            file.write("Infer pipe ran")
         self.sub_flow = sub_flow
         self.gst_pipe = gst_pipe
         self.gst_pre_inp = gst_pipe.get_src(sub_flow.gst_pre_src_name, sub_flow.flow.id)
