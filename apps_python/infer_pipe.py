@@ -29,7 +29,7 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-import paho.mqtt.client as mqtt
+# import paho.mqtt.client as mqtt
 from time import time
 import threading
 import utils
@@ -51,40 +51,40 @@ TOPICS = [
 USERNAME = "your_username"  # Replace with your MQTT username if authentication is enabled
 PASSWORD = "your_password"  # Replace with your MQTT password if authentication is enabled
 
-def on_connect(client, userdata, flags, rc):
-    """
-    Callback when the client receives a CONNACK response from the server.
-    """
-    if rc == 0:
-        with open("log.txt", "w") as file:
-            file.write("Connected to MQTT Broker successfully.")
-        # Subscribe to the specified topics
-            for topic, qos in TOPICS:
-                client.subscribe(topic, qos)
-                file.write(f"Subscribed to topic: {topic} with QoS: {qos}")
-    else:
-        with open("log.txt", "w") as file:
-            file.write(f"Failed to connect to MQTT Broker. Return code: {rc}")
+# def on_connect(client, userdata, flags, rc):
+#     """
+#     Callback when the client receives a CONNACK response from the server.
+#     """
+#     if rc == 0:
+#         with open("log.txt", "w") as file:
+#             file.write("Connected to MQTT Broker successfully.")
+#         # Subscribe to the specified topics
+#             for topic, qos in TOPICS:
+#                 client.subscribe(topic, qos)
+#                 file.write(f"Subscribed to topic: {topic} with QoS: {qos}")
+#     else:
+#         with open("log.txt", "w") as file:
+#             file.write(f"Failed to connect to MQTT Broker. Return code: {rc}")
 
-def on_message(client, userdata, msg):
-    """
-    Callback when a PUBLISH message is received from the server.
-    """
-    topic = msg.topic
-    payload = msg.payload.decode('utf-8')
-    with open("log.txt", "w") as file:
-        file.write(f"Received message from topic '{topic}': {payload}")
+# def on_message(client, userdata, msg):
+#     """
+#     Callback when a PUBLISH message is received from the server.
+#     """
+#     topic = msg.topic
+#     payload = msg.payload.decode('utf-8')
+#     with open("log.txt", "w") as file:
+#         file.write(f"Received message from topic '{topic}': {payload}")
 
-def on_disconnect(client, userdata, rc):
-    """
-    Callback when the client disconnects from the broker.
-    """
-    if rc != 0:
-        with open("log.txt", "w") as file:
-            file.write("Unexpected disconnection from MQTT Broker.")
-    else:
-        with open("log.txt", "w") as file:
-            file.write("Disconnected from MQTT Broker.")
+# def on_disconnect(client, userdata, rc):
+#     """
+#     Callback when the client disconnects from the broker.
+#     """
+#     if rc != 0:
+#         with open("log.txt", "w") as file:
+#             file.write("Unexpected disconnection from MQTT Broker.")
+#     else:
+#         with open("log.txt", "w") as file:
+#             file.write("Disconnected from MQTT Broker.")
 
 class InferPipe:
     """
@@ -124,20 +124,20 @@ class InferPipe:
 
         self.pipeline_thread = threading.Thread(target=self.pipeline)
         self.stop_thread = False
-        self.client = mqtt.Client()
-        self.client.on_connect = on_connect
-        self.client.on_message = on_message
-        self.client.on_disconnect = on_disconnect
-        try:
-        # Connect to the MQTT Broker
-            self.client.connect(BROKER_ADDRESS, BROKER_PORT, KEEPALIVE)
+        # self.client = mqtt.Client()
+        # self.client.on_connect = on_connect
+        # self.client.on_message = on_message
+        # self.client.on_disconnect = on_disconnect
+        # try:
+        # # Connect to the MQTT Broker
+        #     self.client.connect(BROKER_ADDRESS, BROKER_PORT, KEEPALIVE)
 
-        # Start the Network Loop
-            self.client.loop_forever()
+        # # Start the Network Loop
+        #     self.client.loop_forever()
 
-        except Exception as e:
-            with open("log.txt", "w") as file:
-                file.write(f"An error occurred: {e}")
+        # except Exception as e:
+        #     with open("log.txt", "w") as file:
+        #         file.write(f"An error occurred: {e}")
 
     def start(self):
         """
