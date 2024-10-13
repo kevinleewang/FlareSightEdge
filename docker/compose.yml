@@ -1,0 +1,6 @@
+name: flaresight
+services:
+  vision:
+    image: flaresight:v0.1.0
+    build: .
+    command: ["/bin/bash", "-c", "sleep infinity"]

@@ -32,6 +32,7 @@
 
 # This script is intented to work with single container.
 
+# Don't use this please - Ben
 # Number container exist
 cont_count=`docker ps -aq | wc -l`
 
@@ -47,29 +48,35 @@ EDGEAI_SDK_VERSION=$EDGEAI_SDK_VERSION
 #If no container exist, then create the container.
 if [ $cont_count -eq 0 ]
 then
+    # just use this command - Ben (honestly better to use docker compose imo though)
     docker run -it \
         -v /dev:/dev \
         -v /opt:/opt \
         -v /:/host \
         --privileged \
-        --network host \
-         --env USE_PROXY=$USE_PROXY \
-        edge_ai_kit $SOC $PYTHONPATH $EDGEAI_GST_APPS_PATH $EDGEAI_DATA_PATH \
-        $OOB_DEMO_ASSETS_PATH $MODEL_ZOO_PATH $EDGEAI_VERSION $EDGEAI_SDK_VERSION
+        --network host
+
+        # set the 'ENV' variables in the Dockerfile instead of here so the container is more portable
+        # --env USE_PROXY=$USE_PROXY \
+        # edge_ai_kit $SOC $PYTHONPATH $EDGEAI_GST_APPS_PATH $EDGEAI_DATA_PATH \
+        # $OOB_DEMO_ASSETS_PATH $MODEL_ZOO_PATH $EDGEAI_VERSION $EDGEAI_SDK_VERSION
+
+# this is dumb af, just run the container -Ben
 # If one container exist, execute that container.
 elif [ $cont_count -eq 1 ]
 then
     cont_id=`docker ps -q -l`
     docker start $cont_id
     docker exec -it \
-        --env SOC=$SOC \
-        --env PYTHONPATH=$PYTHONPATH \
-        --env EDGEAI_GST_APPS_PATH=$EDGEAI_GST_APPS_PATH \
-        --env EDGEAI_DATA_PATH=$EDGEAI_DATA_PATH \
-        --env OOB_DEMO_ASSETS_PATH=$OOB_DEMO_ASSETS_PATH \
-        --env MODEL_ZOO_PATH=$MODEL_ZOO_PATH \
-        --env EDGEAI_VERSION=$EDGEAI_VERSION \
-        --env EDGEAI_SDK_VERSION=$EDGEAI_SDK_VERSION \
+        # set the 'ENV' variables in the Dockerfile instead of here so the container is more portable
+        # --env SOC=$SOC \
+        # --env PYTHONPATH=$PYTHONPATH \
+        # --env EDGEAI_GST_APPS_PATH=$EDGEAI_GST_APPS_PATH \
+        # --env EDGEAI_DATA_PATH=$EDGEAI_DATA_PATH \
+        # --env OOB_DEMO_ASSETS_PATH=$OOB_DEMO_ASSETS_PATH \
+        # --env MODEL_ZOO_PATH=$MODEL_ZOO_PATH \
+        # --env EDGEAI_VERSION=$EDGEAI_VERSION \
+        # --env EDGEAI_SDK_VERSION=$EDGEAI_SDK_VERSION \
         $cont_id /bin/bash
 
 else

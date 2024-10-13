@@ -26,7 +26,7 @@
 #  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 #  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 #  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORTs
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -40,21 +40,21 @@ if [ -d "/opt/proxy" ]; then
     cp -r /opt/proxy ./
 fi
 
-# modify the server and proxy URLs as requied
+# I'm assuming we don't need a proxy - Ben
+USE_PROXY=0
 if [ "${USE_PROXY}" -ne "0" ]; then
     REPO_LOCATION=
     HTTP_PROXY=
 else
-    REPO_LOCATION=
+    REPO_LOCATION=arm64v8
 fi
-echo "USE_PROXY = $USE_PROXY"
-echo "REPO_LOCATION = $DOCKER_REPO_INTERNAL"
 
 # Build docker image
+# make sure the environment variables are all set in this shell file
 docker build \
     -f Dockerfile \
-    -t edge_ai_kit \
+    -t flaresight:v0.1.0 \
     --build-arg USE_PROXY=$USE_PROXY \
-    --build-arg REPO_LOCATION=$DOCKER_REPO_INTERNAL \
+    --build-arg REPO_LOCATION=$REPO_LOCATION \
     --build-arg HTTP_PROXY=$HTTP_PROXY \
     --build-arg NPROC=$NPROC .

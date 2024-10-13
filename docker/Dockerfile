@@ -28,8 +28,8 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-ARG USE_PROXY
-ARG HTTP_PROXY
+ARG USE_PROXY=0
+ARG HTTP_PROXY=doesntmatter
 ARG REPO_LOCATION=arm64v8
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NPROC=1
@@ -120,6 +120,14 @@ RUN apt-get install -y \
     gir1.2-gst-rtsp-server-1.0 && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+ENV SOC=
+ENV PYTHONPATH=
+ENV EDGEAI_GST_APPS_PATH=
+ENV EDGEAI_DATA_PATH=
+ENV OOB_DEMO_ASSETS_PATH=
+ENV EDGEAI_VERSION=
+ENV EDGEAI_SDK_VERSION=
+
 #setup entrypoint to run the demo application
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+# ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 
