@@ -1,0 +1,21 @@
+title: "Image Classification Demo"
+log_level: 2
+inputs:
+    input0:
+        source: /opt/edgeai-gst-apps/data_videos/women_and_dogs.mp4
+        width: 1920
+        height: 1080
+        framerate: 25
+        loop: False
+models:
+    model0:
+        model_path: /opt/model_zoo/TFL-CL-0000-mobileNetV1-mlperf
+        topN: 5
+outputs:
+    output0:
+        sink: /opt/edgeai-gst-apps/data_videos/output_video.mkv
+        width: 1920
+        height: 1080
+
+flows:
+    flow0: [input0,model0,output0,[320,180,1280,720]]
