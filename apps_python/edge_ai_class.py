@@ -31,7 +31,7 @@
 import config_parser
 import gst_wrapper
 from gst_element_map import gst_element_map
-from edgeai_dl_inferer import ModelConfig
+# from edgeai_dl_inferer import ModelConfig
 from infer_pipe import InferPipe
 import utils
 import sys
