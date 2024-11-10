@@ -34,13 +34,120 @@ import yaml
 
 from edge_ai_class import EdgeAIDemo
 import utils
+import numpy as np
+import time
+
+import paho.mqtt.client as mqtt
+
+# MQTT Broker Settings
+BROKER_ADDRESS = "192.168.87.21"  # Replace with your laptop's IP address
+BROKER_PORT = 1883                 # Default MQTT port
+KEEPALIVE = 60                     # Keepalive interval in seconds
+
+# MQTT Topics to Subscribe To
+TOPICS = [
+    ("sensor/co", 0),
+    ("sensor/co2", 0),   # QoS level 0
+    ("sensor/smoke", 0)  # QoS level 0 
+]
+
+# Optional: MQTT Authentication
+USERNAME = "your_username"  # Replace with your MQTT username if authentication is enabled
+PASSWORD = "your_password"  # Replace with your MQTT password if authentication is enabled
+
+SMOKE = None
+CO = None
+CO2 = None
+NUM_SAMPLES = 0
+
+def predict_logistic_regression(input_values):
+    # Add bias term to the input values
+    weight_smoke = 0.01809941
+    weight_co    = -0.03103623
+    weight_co2   = -0.01070597
+    weights      = np.array([weight_smoke, weight_co, weight_co2])
+    bias         = -0.00660117
+    
+    # Calculate the dot product of input values and weights
+    dot_product  = np.dot(input_values, weights)
+    
+    # Calculate the predicted probability using the logistic function
+    prediction   = 1 / (1 + np.exp(-dot_product - bias))
+    return prediction
+
+def on_connect(client, userdata, flags, rc):
+    """
+    Callback when the client receives a CONNACK response from the server.
+    """
+    if rc == 0:
+        with open("log.txt", "a") as file:
+            file.write("Connected to MQTT Broker successfully.\n")
+        # Subscribe to the specified topics
+            for topic, qos in TOPICS:
+                client.subscribe(topic, qos)
+                file.write(f"Subscribed to topic: {topic} with QoS: {qos}\n")
+    else:
+        with open("log.txt", "a") as file:
+            file.write(f"Failed to connect to MQTT Broker. Return code: {rc}\n")
+
+def on_message(client, userdata, msg):
+    """
+    Callback when a PUBLISH message is received from the server.
+    """
+    global CO, CO2, SMOKE, NUM_SAMPLES
+
+    topic = msg.topic
+    payload = msg.payload.decode('utf-8')
+    if topic == "sensor/co2":
+        CO2 = float(payload)
+    elif topic == "sensor/smoke":
+        SMOKE = float(payload)
+    elif topic == "sensor/co":
+        CO = float(payload)
+
+    if SMOKE and CO and CO2:
+        prediction = predict_logistic_regression([SMOKE, CO, CO2])
+        with open("log.txt", "a") as file:
+            file.write(f"SMOKE: {SMOKE}, CO: {CO}, CO2: {CO2}\n")
+            file.write(f"Prediction: {prediction}\n\n")
+        SMOKE = None
+        CO = None
+        CO2 = None
+        f = open(f"sample{NUM_SAMPLES}.npy", "w")
+        NUM_SAMPLES += 1
+
+def on_disconnect(client, userdata, rc):
+    """
+    Callback when the client disconnects from the broker.
+    """
+    if rc != 0:
+        with open("log.txt", "a") as file:
+            file.write("Unexpected disconnection from MQTT Broker.\n")
+    else:
+        with open("log.txt", "a") as file:
+            file.write("Disconnected from MQTT Broker.\n")
 
 
 def main(sys_argv):
-    with open("/opt/edgeai-gst-apps/log.txt", "w") as file:
+    with open("/opt/edgeai-gst-apps/log.txt", "a") as file:
             file.write("App edge ai ran")
 
     args = utils.get_cmdline_args(sys_argv)
+
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.on_disconnect = on_disconnect
+    try:
+    # Connect to the MQTT Broker
+        client.connect(BROKER_ADDRESS, BROKER_PORT, KEEPALIVE)
+
+    # Start the Network Loop
+        client.loop_forever()
+
+    except Exception as e:
+        with open("log.txt", "a") as file:
+            file.write(f"An error occurred: {e}\n")
 
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
